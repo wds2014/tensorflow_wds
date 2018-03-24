@@ -40,6 +40,7 @@ class lenet_net(object):
             weights=self.init_weights([500,10])
             bias=self.init_bias([10])
             y=tf.nn.softmax(tf.matmul(relu1,weights)+bias)
+            self.y=y
 
 
         cross_entropy=-tf.reduce_sum(self.input_label*tf.log(y))
@@ -66,4 +67,12 @@ class lenet_net(object):
                 path='./snap/'+str(i)+'_model.skpt'
                 saver_file=saver.save(sess,path)
                 print("sucussful:",saver_file)
+
+    def test(self,image_data,skpt):
+        saver=tf.train.Saver()
+        with tf.Session() as sess:
+            tf.global_variables_initializer().run()
+            saver.restore(sess,skpt)
+            result=sess.run(self.y,feed_dict={self.input_data:image_data})
+            return result
 
